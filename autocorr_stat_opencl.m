@@ -2,7 +2,7 @@ function ACF = autocorr_stat_opencl(A, device_num)
     
     % Add path with functions for OpenCL implementation
     [folder, ~, ~] = fileparts(which('autocorr_stat_opencl'));
-    addpath(fullfile(folder, 'MatCL-master'));
+    addpath(folder, fullfile(folder, 'MatCL-master'))
     
     if size(A,1) ~= size(A,2)
         error('Input matrix needs to be square.')
