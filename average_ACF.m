@@ -1,6 +1,7 @@
 function [ACFr, R] = average_ACF(A, angles, radii)
     % Average the autocorrelation matrix A over different angles. angles
-    % and radii variables are of the shape [start, stop, step]
+    % and radii variables are arrays of radii and angles. Radii should lie
+    % between 0 and (floor(min(size(A)) / 2) - 1)
     
     % Define default values of angles and radii if none are given
     if nargin == 1
@@ -8,12 +9,12 @@ function [ACFr, R] = average_ACF(A, angles, radii)
         R   = 0:0.1:(floor(min(size(A)) / 2) - 1);
         
     elseif nargin == 2
-        ANG = angles(1):angles(3):angles(2);
+        ANG = angles;
         R   = 0:0.1:(floor(min(size(A)) / 2) - 1);
         
     elseif nargin == 3
-        ANG = angles(1):angles(3):angles(2);
-        R   = radii(1):radii(3):radii(2);
+        ANG = angles;
+        R   = radii;
     end
     
     % Define center pixel of autocorrelation matrix
