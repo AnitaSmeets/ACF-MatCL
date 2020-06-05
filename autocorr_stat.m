@@ -1,6 +1,19 @@
 function B = autocorr_stat(A)
+    % -------------------------------------------------------
     % Compute the statistical 2D autocorrelation of a matrix.
-    % A is a 2D matrix, B will be a 2D matrix of size 2 * A - 1
+    % -------------------------------------------------------
+    %
+    % ACF = autocorr_stat(A)
+    %
+    % Input
+    % -----
+    %
+    % A: Input matrix (must be 2D matrix)
+    %
+    % Output
+    % ------
+    %
+    % ACF: Output 2D auto-correlation (size(ACF) = 2 * size(A) - 1)
     
     % Determine total number of elements in A to loop over.
     N = size(A, 1) * size(A, 2);

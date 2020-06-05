@@ -1,8 +1,20 @@
 function D = bulk_ACF(C)
-    % Evaluates a cell array of conductance maps using the autocorr_stat
-    % function. The function is called using the parallel computing
-    % toolbox. To optimize performance, configure the toolbox to use all
-    % available threads on the CPU.
+    % ----------------------------------------------
+    % Parallel bulk computation of auto-correlations
+    % ----------------------------------------------
+    %
+    % D = bulk_ACF(C)
+    %
+    % Input
+    % -----
+    % 
+    % C: Cell array containing 2D matrices to be evaluated
+    %
+    % Output
+    % ------
+    % 
+    % D: Output cell array containing 2D auto-correlations
+    
     
     if min(size(C)) ~= 1 || length(size(C)) > 2
         error('Input cell must be 1D')

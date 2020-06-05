@@ -1,4 +1,21 @@
 function ACF = autocorr_stat_opencl(A, device_num)
+    % ------------------------------------------
+    % Calculate 2D auto-correlation using OpenCL
+    % ------------------------------------------
+    %
+    % ACF = autocorr_stat_opencl(A, device_num)
+    %
+    % Input
+    % -----
+    %
+    % A: Input matrix. Must be square and multiple of max_wg_size if larger
+    % than max_wg_size (see cl_get_devices)
+    % device_num: OpenCL device to be used (see cl_get_devices)
+    %
+    % Output
+    % ------
+    % 
+    % ACF: Output 2D auto-correlation
     
     % Add path with functions for OpenCL implementation
     [folder, ~, ~] = fileparts(which('autocorr_stat_opencl'));
