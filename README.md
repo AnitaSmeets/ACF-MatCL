@@ -50,7 +50,7 @@ For example on a system with an AMD FirePro M4000 GPU and an Intel Core i7-3630Q
 
 ## Usage
 
-Information for individual functions is also available through the `help` command (`help autocorr_stat`).
+Information for individual functions is also available through the `help` command (`help autocorr_stat`). Examples can be found in the 'Examples' folder. 
 
 #### Enumerate OpenCL Devices (returns a list whose i-th entry corresponds to the i-th OpenCL device):  
 ```[names, dev_class, max_mem, max_wg_size, max_local_work_size, compute_units] = cl_get_devices();```  
