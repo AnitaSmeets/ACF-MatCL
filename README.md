@@ -3,7 +3,14 @@ These are a collection of MATLAB and OpenCL functions that calculate the statist
 
 These functions make use of the [MatCL OpenCL interface for MATLAB](https://github.com/IANW-Projects/MatCL). Required functions from MatCL are included in the folder MatCL-master. MatCL is licensed under the Creative Commons licence [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode).
 
+Tested on MATLAB R2020a
+
 ## Description
+The functions can be used to calculate a 2D auto-correlation. The functions calculate a Pearson product-moment correlation coefficient for all possible displacements of the image with respect to itself. This is also known as the Zero-normalized cross-correlation of an image with a displaced version of itself.
+
+The collection also includes a function used for the calculation of a radially averaged auto-correlation of a 2D auto-correlation.
+
+The calculations of the 2D auto-correlations can be done at several levels of parallelisation. An overview of the functions and an explanation of which to use in what situation are given at the end of this manual.
 
 ## Setup
 
@@ -41,6 +48,8 @@ For example on a system with an AMD FirePro M4000 GPU and an Intel Core i7-3630Q
 
 
 ## Usage
+
+Information for individual functions is also available through the `help` command (`help autocorr_stat`).
 
 #### Enumerate OpenCL Devices (returns a list whose i-th entry corresponds to the i-th OpenCL device):  
 ```[names, dev_class, max_mem, max_wg_size, max_local_work_size, compute_units] = cl_get_devices();```  
@@ -98,3 +107,47 @@ For example on a system with an AMD FirePro M4000 GPU and an Intel Core i7-3630Q
    `ACFr`: 1D array of radially averaged auto-correlation  
    `R`: 1D array of radii (in pixels)  
    
+
+## 'What function do I use?'
+
+Check the following descriptions of the functions to decide which function is best suited to your goals, or skip to the end for a table of the calculation times.
+
+### 'I only need to calculate a few auto-correlations of small images'
+If only a few auto-correlations of small images (128x128 px) need to be calculated, `autocorr_stat` is sufficient. It only requires the normal MATLAB installation. 
+On the test system, the calculation for one image of 128x128 pixels took 28 s.
+
+**Warning:** The function scales with N^2. A 256x256 image will take 16 times as long as a 128x128 image.
+
+### 'I need to calculate several auto-correlations of small images'
+The `bulk_ACF` function calls `autocorr_stat` in parallel threads. This means that `time(X images) < X * time(1 image)`. The exact time depends on the CPU and on the amount of MATLAB parallel workers (can be changed in the Parallel Processing Toolbox preferences).
+Using 8 workers in the Parallel Pool on the test system the calculation of 50 images of 128x128 pixels took 7.5 min. 
+
+**Tip:** Change the amount of workers of your MATLAB Parallel Pool in the Parallel Processing Toolbox preferences and see what gives the best performance. A good starting point would be the amount of threads your CPU can run.
+
+**Warning:** The function scales with N^2.
+
+### 'I don't want to wait that long'
+The `autocorr_stat_opencl` function runs the same calculation on either the GPU or the CPU using OpenCL code. You can see which devices are available using `cl_get_devices`. 
+
+On the test system, the calculation of one 128x128 image took 0.75 s (both CPU and GPU).
+
+**Warning 1:** The function scales with N^2
+
+**Warning 2 (Windows):** On windows systems, calculating large images (> 256x256) on the GPU may cause the program to be interrupted by the OS. Afterwards, the code will not run and MATLAB has to be restarted.  
+This problem can be somewhat avoided by not using the computer (not even moving the mouse) while the program is running.  
+Running the code on the CPU is more stable.
+
+**Warning 3 (Linux):** On Linux systems, the desktop environment may freeze while the program is running on the GPU. Once the program is finished, everything will work again.
+
+### Calculation times
+
+The code was tested in MATLAB R2020a on a system with an Intel Core i7-3630QM CPU and an AMD FirePro M4000 GPU.
+
+| | 1 x (128x128) | 50 x (128x128) | 1 x (512x512) | 50 x (512x512) |
+|---|---|---|---|---|
+|`autocorr_stat`| 28 s | 24 min* | 2 h* | 100 h* |
+|`bulk_ACF` (8 workers)| 29 s | 7.5 min | 2 h* | 32 h* |
+|`autocorr_stat_opencl` (CPU) | 0.75 s | 36 s | 30 s | 25 min*|
+|`autocorr_stat_opencl` (GPU) | 0.75 s | 35 s | 16.5 s| 14 min*|
+
+Times marked with a * are estimated using known data and N^2 scaling.
