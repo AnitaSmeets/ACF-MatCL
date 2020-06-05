@@ -1,5 +1,5 @@
 # ACF-MatCL
-These are a collection of MATLAB and OpenCL functions that calculate the statistical auto-correlation of a 2D matrix.
+A collection of MATLAB and OpenCL functions that calculate the statistical auto-correlation of a 2D matrix.
 
 These functions make use of the [MatCL OpenCL interface for MATLAB](https://github.com/IANW-Projects/MatCL). Required functions from MatCL are included in the folder MatCL-master. MatCL is licensed under the Creative Commons licence [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode).
 
@@ -15,7 +15,18 @@ The calculations of the 2D auto-correlations can be done at several levels of pa
 ## Setup
 
 Download all files in the repository.
-Depending on the functions to be used, the Parallel Processing Toolbox and/or the OpenCL runtime need to be installed. Check the function requirements for more information.
+Depending on the functions to be used, the Parallel Processing Toolbox and/or the OpenCL runtime need to be installed. 
+
+### Function requirements
+
+| Function |  Parallel Processing Toolbox | OpenCL runtime |
+|---|:---:|:---:|
+|`cl_get_devices` | | :heavy_check_mark: |
+|`autocorr_stat` | | |
+|`bulk_ACF` | :heavy_check_mark: | |
+|`autocorr_stat_opencl` | | :heavy_check_mark:|
+|`average_ACF` | | |
+
 
 ### Windows
 
@@ -36,16 +47,6 @@ OpenCL runtimes may not be included in the graphics drivers. Look for and instal
 
 For example on a system with an AMD FirePro M4000 GPU and an Intel Core i7-3630QM CPU running Arch Linux the packages would be `opencl-mesa` for the GPU and `intel-opencl-runtime` for the CPU.
 
-### Function requirements
-
-| Function |  Parallel Processing Toolbox | OpenCL runtime |
-|---|:---:|:---:|
-|`cl_get_devices` | | :heavy_check_mark: |
-|`autocorr_stat` | | |
-|`bulk_ACF` | :heavy_check_mark: | |
-|`autocorr_stat_opencl` | | :heavy_check_mark:|
-|`average_ACF` | | |
-
 
 ## Usage
 
@@ -64,7 +65,7 @@ Information for individual functions is also available through the `help` comman
    
 ---
 
-#### Calculate 2D auto-correlation using MATLAB only:  
+#### Calculate 2D auto-correlation (single-threaded):  
 ```ACF = autocorr_stat(A);```
 
   **Input:**  
@@ -74,7 +75,7 @@ Information for individual functions is also available through the `help` comman
    `ACF`: Output 2D auto-correlation  
    
 ---
-#### Calculate multiple 2D auto-correlations using the MATLAB Parallel Computing Toolbox:  
+#### Calculate multiple 2D auto-correlations (multi-threaded):  
 ```D = bulk_ACF(C);```
 
   **Input:**  
@@ -110,35 +111,6 @@ Information for individual functions is also available through the `help` comman
 
 ## 'What function do I use?'
 
-Check the following descriptions of the functions to decide which function is best suited to your goals, or skip to the end for a table of the calculation times.
-
-### 'I only need to calculate a few auto-correlations of small images'
-If only a few auto-correlations of small images (128x128 px) need to be calculated, `autocorr_stat` is sufficient. It only requires the normal MATLAB installation. 
-On the test system, the calculation for one image of 128x128 pixels took 28 s.
-
-**Warning:** The function scales with N^2. A 256x256 image will take 16 times as long as a 128x128 image.
-
-### 'I need to calculate several auto-correlations of small images'
-The `bulk_ACF` function calls `autocorr_stat` in parallel threads. This means that `time(X images) < X * time(1 image)`. The exact time depends on the CPU and on the amount of MATLAB parallel workers (can be changed in the Parallel Processing Toolbox preferences).
-Using 8 workers in the Parallel Pool on the test system the calculation of 50 images of 128x128 pixels took 7.5 min. 
-
-**Tip:** Change the amount of workers of your MATLAB Parallel Pool in the Parallel Processing Toolbox preferences and see what gives the best performance. A good starting point would be the amount of threads your CPU can run.
-
-**Warning:** The function scales with N^2.
-
-### 'I don't want to wait that long'
-The `autocorr_stat_opencl` function runs the same calculation on either the GPU or the CPU using OpenCL code. You can see which devices are available using `cl_get_devices`. 
-
-On the test system, the calculation of one 128x128 image took 0.75 s (both CPU and GPU).
-
-**Warning 1:** The function scales with N^2
-
-**Warning 2 (Windows):** On windows systems, calculating large images (> 256x256) on the GPU may cause the program to be interrupted by the OS. Afterwards, the code will not run and MATLAB has to be restarted.  
-This problem can be somewhat avoided by not using the computer (not even moving the mouse) while the program is running.  
-Running the code on the CPU is more stable.
-
-**Warning 3 (Linux):** On Linux systems, the desktop environment may freeze while the program is running on the GPU. Once the program is finished, everything will work again.
-
 ### Calculation times
 
 The code was tested in MATLAB R2020a on a system with an Intel Core i7-3630QM CPU and an AMD FirePro M4000 GPU.
@@ -150,4 +122,33 @@ The code was tested in MATLAB R2020a on a system with an Intel Core i7-3630QM CP
 |`autocorr_stat_opencl` (CPU) | 0.75 s | 36 s | 30 s | 25 min*|
 |`autocorr_stat_opencl` (GPU) | 0.75 s | 35 s | 16.5 s| 14 min*|
 
-Times marked with a * are estimated using known data and N^2 scaling.
+Times marked with * are estimated using known data and N^2 scaling.
+
+
+Check the following descriptions of the functions to decide which function is best suited to your goals.
+
+### 'I only need to calculate a few auto-correlations of small images'
+If only a few auto-correlations of small images (128x128 px) need to be calculated, `autocorr_stat` is sufficient. It only requires the normal MATLAB installation. 
+On the test system, the calculation for one image of 128x128 pixels took 28 s.
+
+**Note:** The function scales with N^2. A 256x256 image will take 16 times as long as a 128x128 image.
+
+### 'I need to calculate several auto-correlations of small images'
+The `bulk_ACF` function calls `autocorr_stat` in parallel threads. This means that `time(X images) < X * time(1 image)`. The exact time depends on the CPU and on the amount of MATLAB parallel workers (can be changed in the Parallel Processing Toolbox preferences).
+Using 8 workers in the Parallel Pool on the test system the calculation of 50 images of 128x128 pixels took 7.5 min. 
+
+**Tip:** Change the amount of workers of your MATLAB Parallel Pool in the Parallel Processing Toolbox preferences and see what gives the best performance. A good starting point would be the amount of threads your CPU can run.
+
+**Note:** The function scales with N^2.
+
+### 'I don't want to wait that long'
+The `autocorr_stat_opencl` function runs the same calculation on either the GPU or the CPU using OpenCL code. You can see which devices are available using `cl_get_devices`. 
+
+On the test system, the calculation of one 128x128 image took 0.75 s (both CPU and GPU).
+
+**Note 1:** The function scales with N^2
+
+**Note 2 (Windows):** Running calculations for large images (during testing > 256x256) on a GPU that is also in use by the operating system may cause a crash. Consider running the code on a separate GPU (if available) or on the CPU to avoid this.
+
+**Note 3 (Linux):** On Linux systems, the desktop environment may freeze while the program is running on the GPU. Once the program is finished, everything will work again. Consider running the code on a separate GPU (if available) or on the CPU to avoid this.
+
