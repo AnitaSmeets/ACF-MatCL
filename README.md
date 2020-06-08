@@ -119,8 +119,8 @@ The code was tested in MATLAB R2020a on a system with an Intel Core i7-3630QM CP
 |---|---|---|---|---|
 |`autocorr_stat`| 28 s | 24 min* | 2 h* | 100 h* |
 |`bulk_ACF` (8 workers)| 29 s | 7.5 min | 2 h* | 32 h* |
-|`autocorr_stat_opencl` (CPU) | 0.75 s | 36 s | 30 s | 25 min*|
-|`autocorr_stat_opencl` (GPU) | 0.75 s | 35 s | 16.5 s| 14 min*|
+|`autocorr_stat_opencl` (CPU) | 0.75 s | 36 s | 30 s | 30 min|
+|`autocorr_stat_opencl` (GPU) | 0.75 s | 35 s | 16.5 s| 14 min|
 
 Times marked with * are estimated using known data and N^2 scaling.
 
