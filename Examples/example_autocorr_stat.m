@@ -1,5 +1,8 @@
 % Example: How to use autocorr_stat
 
+% Add path with functions to searchpath
+addpath(fullfile('.', '..'));
+
 % Initialize input matrix
 
 sz = 128;   % Input matrix size

@@ -1,5 +1,8 @@
 % Example: How to use bulk_ACF
 
+% Add path with functions to searchpath
+addpath(fullfile('.', '..'));
+
 % Initialize input matrices
 
 N   = 50;       % Number of matrices

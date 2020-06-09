@@ -1,5 +1,8 @@
 % Example: How to use average_ACF
 
+% Add path with functions to searchpath
+addpath(fullfile('.', '..'));
+
 % Initialize input matrix, in practice this matrix would be the output of one of
 % the auto-correlation functions
 
