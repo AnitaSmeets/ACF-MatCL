@@ -113,29 +113,29 @@ Information for individual functions is also available through the `help` comman
 
 ### Calculation times
 
-The code was tested in MATLAB R2020a on a system with an Intel Core i7-3630QM CPU and an AMD FirePro M4000 GPU.
+The code was tested in MATLAB R2020a on Arch Linux on a system with an Intel Core i7-3630QM CPU and an AMD FirePro M4000 GPU.
 
 | | 1 x (128x128) | 50 x (128x128) | 1 x (512x512) | 50 x (512x512) |
 |---|---|---|---|---|
-|`autocorr_stat`| 28 s | 24 min | 2 h* | 100 h* |
-|`bulk_ACF` (8 workers)| 29 s | 7.5 min | 2 h* | 32 h* |
+|`autocorr_stat`| 5.1 s | 4.5 min | 10.5 min | 9 h* |
+|`bulk_ACF` (8 workers)| 5.2 s | 1 min | 15 min | 8.5 h* |
 |`autocorr_stat_opencl` (CPU) | 0.75 s | 36 s | 30 s | 30 min|
 |`autocorr_stat_opencl` (GPU) | 0.75 s | 35 s | 16.5 s| 14 min|
 
-Times marked with * are estimated using known data and N^2 scaling.
+Times marked with * are estimated.
 
 
 Check the following descriptions of the functions to decide which function is best suited to your goals.
 
 ### 'I only need to calculate a few auto-correlations of small images'
 If only a few auto-correlations of small images (128x128 px) need to be calculated, `autocorr_stat` is sufficient. It only requires the normal MATLAB installation. 
-On the test system, the calculation for one image of 128x128 pixels took 28 s.
+On the test system, the calculation for one image of 128x128 pixels took 5.1 s.
 
-**Note:** The function scales with N^2. A 256x256 image will take 16 times as long as a 128x128 image.
+**Note:** The function scales with almost N^2.
 
 ### 'I need to calculate several auto-correlations of small images'
 The `bulk_ACF` function calls `autocorr_stat` in parallel threads. This means that `time(X images) < X * time(1 image)`. The exact time depends on the CPU and on the amount of MATLAB parallel workers (can be changed in the Parallel Processing Toolbox preferences).
-Using 8 workers in the Parallel Pool on the test system the calculation of 50 images of 128x128 pixels took 7.5 min. 
+Using 8 workers in the Parallel Pool on the test system the calculation of 50 images of 128x128 pixels took 1 min. 
 
 **Tip:** Change the amount of workers of your MATLAB Parallel Pool in the Parallel Processing Toolbox preferences and see what gives the best performance. A good starting point would be the amount of threads your CPU can run.
 
