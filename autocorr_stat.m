@@ -1,4 +1,4 @@
-function B = autocorr_stat(A)
+function ACF = autocorr_stat(A)
     % -------------------------------------------------------
     % Compute the statistical 2D autocorrelation of a matrix.
     % -------------------------------------------------------
@@ -15,75 +15,47 @@ function B = autocorr_stat(A)
     %
     % ACF: Output 2D auto-correlation (size(ACF) = 2 * size(A) - 1)
     
-    % Determine total number of elements in A to loop over.
-    N = size(A, 1) * size(A, 2);
+    % Initialize output matrix
+    ACF = zeros(2 * size(A) - 1);
     
-    % Initialize intermediate results
-    Nr      = zeros(2 * size(A) - 1);
-    I1sum   = zeros(2 * size(A) - 1);
-    I2sum   = zeros(2 * size(A) - 1);
-    I1sqsum = zeros(2 * size(A) - 1);
-    I2sqsum = zeros(2 * size(A) - 1);
+    % Determine total number of elements in ACF to loop over.
+    N = size(ACF, 1) * size(ACF, 2);
     
     % Determine position of center pixel in output matrix
-    row0 = ceil(size(Nr, 1) / 2);
-    col0 = ceil(size(Nr, 2) / 2);
+    row0 = ceil(size(ACF, 1) / 2);
+    col0 = ceil(size(ACF, 2) / 2);
     
-    % Loop over all elements in input matrix to determine average intensity
-    % and variance of pixel intensity.
-    for n = 1:N
-        row1 = rem((n - 1), size(A, 1)) + 1;
-        col1 = (n - row1) / size(A, 1) + 1;
+    % Loop over all vectors in the output matrix to determine the value of
+    % the auto-correlation for this vector
+    for r = 1:N
+        % Determine row and column number of vector in ACF
+        rowr = rem((r - 1), size(ACF, 1)) + 1;
+        colr = (r - rowr) / size(ACF, 1) + 1;
         
-        for m = 1:N
-            row2 = rem((m - 1), size(A, 1)) + 1;
-            col2 = (m - row2) / size(A, 1) + 1;
-            
-            
-            drow = row2 - row1;
-            dcol = col2 - col1;
-            
-            i = row0 + drow;
-            j = col0 + dcol;
-            
-            Nr(i, j)        = Nr(i, j) + 1;
-            I1sum(i, j)     = I1sum(i, j) + A(n);
-            I2sum(i, j)     = I2sum(i, j) + A(m);
-            I1sqsum(i, j)   = I1sqsum(i, j) + (A(n))^2;
-            I2sqsum(i, j)   = I2sqsum(i, j) + (A(m))^2;
-        end
-    end
-    
-    % Calculations intermediate results
-    I1avg = I1sum ./ Nr;
-    I2avg = I2sum ./ Nr;
-    
-    var1 = (I1sqsum ./ Nr) - I1avg.^2;
-    var2 = (I2sqsum ./ Nr) - I2avg.^2;
-    
-    % Initialize output matrix
-    B = zeros(2 * size(A) - 1);
-    
-    % Loop over all elements in input matrix to determine the
-    % autocorrelation
-    for n = 1:N
-        row1 = rem((n - 1), size(A, 1)) + 1;
-        col1 = (n - row1) / size(A, 1) + 1;
+        % Calculate the separation vector belonging to this element in ACF
+        drow = rowr - row0;
+        dcol = colr - col0;
         
-        for m = 1:N
-            row2 = rem((m - 1), size(A, 1)) + 1;
-            col2 = (m - row2) / size(A, 1) + 1;
-            
-            drow = row2 - row1;
-            dcol = col2 - col1;
-            
-            i = row0 + drow;
-            j = col0 + dcol;
-            
-            B(i, j) = B(i, j) + ...
-                ((A(n) - I1avg(i, j)) * (A(m) - I2avg(i, j))) / ...
-                (sqrt(var1(i, j)) * sqrt(var2(i, j)) * Nr(i, j));
-            
-        end
+        % Displace copy of A over itself and determine overlapping areas
+        
+        A1rows = max(1, 1 + drow):min(size(A, 1), size(A, 1) + drow);
+        A2rows = max(1, 1 - drow):min(size(A, 1), size(A, 1) - drow);
+        
+        A1cols = max(1, 1 + dcol):min(size(A, 2), size(A, 2) + dcol);
+        A2cols = max(1, 1 - dcol):min(size(A, 2), size(A, 2) - dcol);
+
+        A1 = A(A1rows, A1cols);
+        A2 = A(A2rows, A2cols);
+
+        % Calculate intermediate results
+        Nr = size(A1, 1) * size(A1, 2);
+        I1 = mean(A1, 'all');
+        I2 = mean(A2, 'all');
+        s1 = std(A1, 1, 'all');
+        s2 = std(A2, 1, 'all');
+
+        % Calculate value of ACF for this vector
+        ACF(rowr, colr) = (1 / (Nr * s1 * s2)) * sum((A1 - I1) .* (A2 - I2), 'all');
+    
     end
 end
