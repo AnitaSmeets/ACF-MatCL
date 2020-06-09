@@ -1,4 +1,4 @@
-% Example: How to use bulk_ACF
+% Example: How to use autocorr_stat_parr
 
 % Add path with functions to searchpath
 addpath(fullfile('.', '..'));
@@ -26,7 +26,7 @@ title(sprintf('Input matrix %i', i))
 % Calculate 2D auto-correlations
 
 tic
-C = bulk_ACF(D);
+C = autocorr_stat_parr(D);
 toc
 
 % Show image of one auto-correlation

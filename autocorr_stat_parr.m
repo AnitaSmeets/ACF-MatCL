@@ -1,9 +1,9 @@
-function D = bulk_ACF(C)
+function D = autocorr_stat_parr(C)
     % ----------------------------------------------
     % Parallel bulk computation of auto-correlations
     % ----------------------------------------------
     %
-    % D = bulk_ACF(C)
+    % D = autocorr_stat_parr(C)
     %
     % Input
     % -----
