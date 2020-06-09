@@ -1,4 +1,4 @@
-% Example: How to use autocorr_stat_parr
+% Example: How to use autocorr_stat_par
 
 % Add path with functions to searchpath
 addpath(fullfile('.', '..'));
@@ -26,7 +26,7 @@ title(sprintf('Input matrix %i', i))
 % Calculate 2D auto-correlations
 
 tic
-C = autocorr_stat_parr(D);
+C = autocorr_stat_par(D);
 toc
 
 % Show image of one auto-correlation

@@ -1,9 +1,9 @@
-function D = autocorr_stat_parr(C)
+function D = autocorr_stat_par(C)
     % ----------------------------------------------
     % Parallel bulk computation of auto-correlations
     % ----------------------------------------------
     %
-    % D = autocorr_stat_parr(C)
+    % D = autocorr_stat_par(C)
     %
     % Input
     % -----

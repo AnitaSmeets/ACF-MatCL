@@ -23,7 +23,7 @@ Depending on the functions to be used, the Parallel Processing Toolbox and/or th
 |---|:---:|:---:|
 |`cl_get_devices` | | :heavy_check_mark: |
 |`autocorr_stat` | | |
-|`autocorr_stat_parr` | :heavy_check_mark: | |
+|`autocorr_stat_par` | :heavy_check_mark: | |
 |`autocorr_stat_opencl` | | :heavy_check_mark:|
 |`average_ACF` | | |
 
@@ -76,7 +76,7 @@ Information for individual functions is also available through the `help` comman
    
 ---
 #### Calculate multiple 2D auto-correlations (multi-threaded):  
-```D = autocorr_stat_parr(C);```
+```D = autocorr_stat_par(C);```
 
   **Input:**  
    `C`: Cell array containing 2D matrices to be evaluated  
@@ -118,7 +118,7 @@ The code was tested in MATLAB R2020a on Arch Linux on a system with an Intel Cor
 | | 1 x (128x128) | 50 x (128x128) | 1 x (512x512) | 50 x (512x512) |
 |---|---|---|---|---|
 |`autocorr_stat`| 5.1 s | 4.5 min | 10.5 min | 9 h* |
-|`autocorr_stat_parr` (8 workers)| 5.2 s | 1 min | 15 min | 8.5 h* |
+|`autocorr_stat_par` (8 workers)| 5.2 s | 1 min | 15 min | 8.5 h* |
 |`autocorr_stat_opencl` (CPU) | 0.75 s | 36 s | 30 s | 30 min|
 |`autocorr_stat_opencl` (GPU) | 0.75 s | 35 s | 16.5 s| 14 min|
 
@@ -134,7 +134,7 @@ On the test system, the calculation for one image of 128x128 pixels took 5.1 s.
 **Note:** The function scales with almost N^2.
 
 ### 'I need to calculate several auto-correlations of small images'
-The `autocorr_stat_parr` function calls `autocorr_stat` in parallel threads. This means that `time(X images) < X * time(1 image)`. The exact time depends on the CPU and on the amount of MATLAB parallel workers (can be changed in the Parallel Processing Toolbox preferences).
+The `autocorr_stat_par` function calls `autocorr_stat` in parallel threads. This means that `time(X images) < X * time(1 image)`. The exact time depends on the CPU and on the amount of MATLAB parallel workers (can be changed in the Parallel Processing Toolbox preferences).
 Using 8 workers in the Parallel Pool on the test system the calculation of 50 images of 128x128 pixels took 1 min. 
 
 **Tip:** Change the amount of workers of your MATLAB Parallel Pool in the Parallel Processing Toolbox preferences and see what gives the best performance. A good starting point would be the amount of threads your CPU can run.
