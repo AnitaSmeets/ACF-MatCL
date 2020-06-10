@@ -25,18 +25,20 @@ function ACF = autocorr_stat(A)
     row0 = ceil(size(ACF, 1) / 2);
     col0 = ceil(size(ACF, 2) / 2);
     
-    % Loop over all vectors in the output matrix to determine the value of
-    % the auto-correlation for this vector
+    % Loop over all entries in the output matrix. Entry r has position
+    % (rowr, colr) in the ACF matrix and describes the vector (drow, dcol).
+    % A copy of the input matrix is displaced by (drow, dcol) with respect
+    % to itself and the correlation of the overlapping areas is calculated
+    % for this vector.
     for r = 1:N
-        % Determine row and column number of vector in ACF
         rowr = rem((r - 1), size(ACF, 1)) + 1;
         colr = (r - rowr) / size(ACF, 1) + 1;
         
-        % Calculate the separation vector belonging to this element in ACF
         drow = rowr - row0;
         dcol = colr - col0;
         
-        % Displace copy of A over itself and determine overlapping areas
+        % Determine overlapping areas of input matrix (A1) and the
+        % displaced copy (A2)
         
         A1rows = max(1, 1 + drow):min(size(A, 1), size(A, 1) + drow);
         A2rows = max(1, 1 - drow):min(size(A, 1), size(A, 1) - drow);
@@ -47,14 +49,14 @@ function ACF = autocorr_stat(A)
         A1 = A(A1rows, A1cols);
         A2 = A(A2rows, A2cols);
 
-        % Calculate intermediate results
-        Nr = size(A1, 1) * size(A1, 2);
-        I1 = mean(A1, 'all');
-        I2 = mean(A2, 'all');
-        s1 = std(A1, 1, 'all');
-        s2 = std(A2, 1, 'all');
+        Nr = size(A1, 1) * size(A1, 2);     % Number of pixels in overlapping area
+        I1 = mean(A1, 'all');               % Mean intensity of A1
+        I2 = mean(A2, 'all');               % Mean intensity of A2
+        s1 = std(A1, 1, 'all');             % Standard deviation of A1
+        s2 = std(A2, 1, 'all');             % Standard deviation of A2
 
-        % Calculate value of ACF for this vector
+        % Calculate the Pearson correlation coefficient for the overlapping
+        % areas
         ACF(rowr, colr) = (1 / (Nr * s1 * s2)) * sum((A1 - I1) .* (A2 - I2), 'all');
     
     end

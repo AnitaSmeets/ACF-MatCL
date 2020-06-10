@@ -17,7 +17,8 @@ function ACF = autocorr_stat_opencl(A, device_num)
     % 
     % ACF: Output 2D auto-correlation
     
-    % Add path with functions for OpenCL implementation
+    % Add path with functions for OpenCL implementation to matlab
+    % searchpath.
     [folder, ~, ~] = fileparts(which('autocorr_stat_opencl'));
     addpath(folder, fullfile(folder, 'MatCL-master'))
     
