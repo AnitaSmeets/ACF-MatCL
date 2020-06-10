@@ -25,9 +25,9 @@ title('Input matrix')
 
 % Calculate the 2D auto-correlation. After the program is finished, the
 % computation time of the auto-correlations will be shown in the Matlab
-% command window. 
-% To change the computation device, change device_num. 
-% To list all available OpenCL devices run the command cl_get_devices 
+% command window.
+% To change the computation device, change device_num.
+% To list all available OpenCL devices run the command cl_get_devices
 % in the Matlab command window.
 
 device_num = 1;

@@ -6,7 +6,7 @@
 addpath(fullfile('.', '..'));
 
 
-% Generate input matrices. As an example, a number of identical 2D sine 
+% Generate input matrices. As an example, a number of identical 2D sine
 % functions are generated. If desired, a cell array with images can be
 % loaded here as D.
 
@@ -28,7 +28,7 @@ i = 4;
 figure
 image(D{i}, 'CDataMapping', 'scaled')
 colorbar
-title(sprintf('Input matrix %i', i)) 
+title(sprintf('Input matrix %i', i))
 
 
 % Calculate the 2D auto-correlations. After the program is finished, the

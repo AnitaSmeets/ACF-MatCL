@@ -7,13 +7,13 @@ addpath(fullfile('.', '..'));
 
 
 % Generate input matrix. As an example, a 2D gaussian centered on the
-% center pixel is generated. In practice the input would be the output of 
+% center pixel is generated. In practice the input would be the output of
 % one of an auto-correlation function. If desired, a pre-calculated
 % auto-correlation can be loaded here instead of Z.
 
 sz = 255;   % Input matrix size
 
-x0 = (sz + 1) / 2;  % Find the center pixel of the auto-correlation. 
+x0 = (sz + 1) / 2;  % Find the center pixel of the auto-correlation.
                     % This pixel corresponds to r = 0.
 s  = sz;            % Standard deviation for example gaussian function
 
@@ -80,4 +80,3 @@ plot(R3, ACFr3)
 xlabel('R (px)')
 ylabel('ACF(r)')
 title('Some angles, some radii')
-
