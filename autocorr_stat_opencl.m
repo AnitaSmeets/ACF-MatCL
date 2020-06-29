@@ -85,7 +85,8 @@ function ACF = autocorr_stat_opencl(A, device_num)
     I1avg = Isum ./ Nrd;
     var1 = Isqsum ./ Nrd - I1avg .^2;
 
-    % Make use of symmetries
+    % Make use of symmetries in the formula to calculate average and
+    % variance of other pixels.
     I2avg = flip(I1avg);
     var2 = flip(var1);
 

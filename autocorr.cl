@@ -14,7 +14,13 @@ __kernel void int_sums(__constant double *A, __global int *Nr,
 	int drow = get_global_id(0);
 	int dcol = get_global_id(1);
 
-	// Initialize temporary variables
+	// Initialize temporary variables. For every combination of drow and dcol
+	// there are 4 possible vectors within the image:
+	// pp = (+drow, +dcol)
+	// np = (-drow, +dcol)
+	// pn = (+drow, -dcol)
+	// nn = (-drow, -dcol)
+
 	int Nr_L = 0;
 
 	double Isum_pp = 0;
@@ -50,7 +56,7 @@ __kernel void int_sums(__constant double *A, __global int *Nr,
 		barrier(CLK_LOCAL_MEM_FENCE);
 
 		// Increment temporary variables using data from the pixels in
-		// local memory.
+		// local memory. Every worker calculates data for 4 vectors.
 		for (int j = 0; j < (int)N - dcol; j++) {
 			Nr_L += 1;
 
@@ -71,8 +77,8 @@ __kernel void int_sums(__constant double *A, __global int *Nr,
 		barrier(CLK_LOCAL_MEM_FENCE);
 	}
 
-	int width = (2 * (int)N - 1);
-	int offset = ((int)N - 1);
+	int width = (2 * (int)N - 1);	// Width of output matrix
+	int offset = ((int)N - 1);		// Center of row/column in output matrix
 
 	// Assign temporary variables to indices in output matrices
 
@@ -102,14 +108,20 @@ __kernel void acf(__constant double *A, __constant double *I1avg,
 	int drow = get_global_id(0);
 	int dcol = get_global_id(1);
 
-	// Initialize temporary variables
+	// Initialize temporary variables. For every combination of drow and dcol
+	// there are 4 possible vectors within the image:
+	// pp = (+drow, +dcol)
+	// np = (-drow, +dcol)
+	// pn = (+drow, -dcol)
+	// nn = (-drow, -dcol)
+
 	double B_pp = 0;
 	double B_np = 0;
 	double B_pn = 0;
 	double B_nn = 0;
 
-	int width = (2 * (int)N - 1);
-	int offset = ((int)N - 1);
+	int width = (2 * (int)N - 1);	// Width of output matrix
+	int offset = ((int)N - 1);		// Center of row/column in output matrix
 
 	// Obtain values from input matrices
 	double I1avg_pp = I1avg[(offset + dcol) * width + offset + drow];
@@ -142,7 +154,7 @@ __kernel void acf(__constant double *A, __constant double *I1avg,
 		barrier(CLK_LOCAL_MEM_FENCE);
 
 		// Increment temporary variables using data from the pixels in
-		// local memory.
+		// local memory. Every worker calculates data for 4 vectors
 		for (int j = 0; j < (int)N - dcol; j++) {
 			B_pp += (pixels1[j] - I1avg_pp) * (pixels2[j + dcol] - I2avg_pp);
 			B_np += (pixels2[j] - I1avg_np) * (pixels1[j + dcol] - I2avg_np);
