@@ -22,6 +22,10 @@ function ACF = autocorr_stat_opencl(A, device_num)
     [folder, ~, ~] = fileparts(which('autocorr_stat_opencl'));
     addpath(folder, fullfile(folder, 'MatCL-master'))
     
+    if size(A,1) <= 1 || size(A, 2) <= 1
+        error('Dimensions must be larger than 1')
+    end
+
     if size(A,1) ~= size(A,2)
         error('Input matrix needs to be square.')
     end
